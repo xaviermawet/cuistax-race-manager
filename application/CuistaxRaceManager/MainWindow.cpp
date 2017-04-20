@@ -9,14 +9,92 @@
 #include "MainWindow.hpp"
 #include "ui_MainWindow.h"
 
+/* ------------------------------------------------------------------------- *
+ * PUBLIC METHODS                                                            *
+ * ------------------------------------------------------------------------- */
+
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent), ui(new Ui::MainWindow)
 {
+    QCoreApplication::setOrganizationName("Nakim");
+    QCoreApplication::setOrganizationDomain("nakim.be");
+    QCoreApplication::setApplicationName("CuistaxRaceManager");
+
     // GUI Configuration
     this->ui->setupUi(this);
+
+    // Restore previous MainWindows layout settings
+    this->readSettings();
 }
 
 MainWindow::~MainWindow(void)
 {
     delete this->ui;
+}
+
+/* ------------------------------------------------------------------------- *
+ * PROTECTED METHODS                                                         *
+ * ------------------------------------------------------------------------- */
+
+void MainWindow::centerOnScreen(void)
+{
+    QDesktopWidget screen;
+
+    QRect screenGeom = screen.screenGeometry(this);
+
+    int screenCenterX = screenGeom.center().x();
+    int screenCenterY = screenGeom.center().y();
+
+    this->move(screenCenterX - width () / 2, screenCenterY - height() / 2);
+}
+
+void MainWindow::readSettings(void)
+{
+    // Restore MainWindow settings
+    this->readLayoutSettings();
+
+    // Other settings to restore ...
+}
+
+void MainWindow::writeSettings(void) const
+{
+    // Save MainWindow settings
+    this->writeLayoutSettings();
+
+    // Other settings to save ...
+}
+
+void MainWindow::readLayoutSettings(void)
+{
+    QSettings settings;
+
+    settings.beginGroup(QSETTINGS_GROUP_MAINWINDOW_LAYOUT);
+
+    this->restoreGeometry(settings.value("geometry").toByteArray());
+
+    // Other MainWindow layout settings ...
+
+    settings.endGroup();
+}
+
+void MainWindow::writeLayoutSettings(void) const
+{
+    QSettings settings;
+
+    settings.beginGroup(QSETTINGS_GROUP_MAINWINDOW_LAYOUT);
+
+    //settings.setValue("isMaximized",this->isMaximized());
+    settings.setValue("geometry", this->saveGeometry());
+
+    // Other MainWindow layout settings ...
+
+    settings.endGroup();
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    // Save the state of the MainWindow and its widgets
+    this->writeSettings();
+
+    QMainWindow::closeEvent(event);
 }

@@ -13,6 +13,8 @@
 // Qt GUI and Qt Widgets modules
 #include <QtWidgets>
 
+#define QSETTINGS_GROUP_MAINWINDOW_LAYOUT "MainWindow_Layout"
+
 namespace Ui {
     class MainWindow;
 }
@@ -33,6 +35,39 @@ class MainWindow : public QMainWindow
          * \brief ~MainWindow: virtual destructor
          */
         virtual ~MainWindow(void);
+
+    protected:
+
+        /*!
+         * \brief centerOnScreen: center the MainWindow
+         */
+        void centerOnScreen(void);
+
+        /*!
+         * \brief readSettings: restore all previous MainWindow settings
+         */
+        void readSettings(void);
+
+        /*!
+         * \brief writeSettings: save all current MainWindow settings
+         */
+        void writeSettings(void) const;
+
+        /*!
+         * \brief readLayoutSettings: restore previous MainWindow layout settings
+         */
+        void readLayoutSettings(void);
+
+        /*!
+         * \brief writeLayoutSettings: save current MainWindow layout settings
+         */
+        void writeLayoutSettings(void) const;
+
+        /*!
+         * \brief closeEvent: close event handler. Overloaded method for writing settings
+         * \param event: the close event
+         */
+        virtual void closeEvent(QCloseEvent* event);
 
     private:
 
