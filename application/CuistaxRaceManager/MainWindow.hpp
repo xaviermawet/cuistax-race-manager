@@ -13,6 +13,8 @@
 // Qt GUI and Qt Widgets modules
 #include <QtWidgets>
 
+#include <Utils/NException.hpp>
+
 #define QSETTINGS_GROUP_MAINWINDOW_LAYOUT "MainWindow_Layout"
 
 namespace Ui {
