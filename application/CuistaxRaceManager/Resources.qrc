@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/sql">
+        <file alias="MySQL-database-schema">Resources/SQL/MySQL-database-schema.sql</file>
+        <file alias="SQLite-database-schema">Resources/SQL/SQLite-database-schema.sql</file>
+    </qresource>
+</RCC>

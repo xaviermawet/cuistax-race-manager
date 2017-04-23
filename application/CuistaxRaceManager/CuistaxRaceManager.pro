@@ -31,3 +31,6 @@ HEADERS  += MainWindow.hpp \
     Utils/NException.hpp
 
 FORMS    += MainWindow.ui
+
+RESOURCES += \
+    Resources.qrc
