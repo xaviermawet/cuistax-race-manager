@@ -247,6 +247,10 @@ mysql -u root -p
 CREATE USER 'nakim' IDENTIFIED BY 'm******X';
     --> Query OK, 0 rows affected (0.00 sec)
 
+# Grant all privileges to newly created user (nakim)
+GRANT ALL PRIVILEGES ON * . * TO 'nakim';
+    --> Query OK, 0 rows affected (0.10 sec)
+
 # Try to log in with the newly created user
 mysql -u nakim -p
 
