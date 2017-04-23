@@ -13,7 +13,8 @@
 // Qt GUI and Qt Widgets modules
 #include <QtWidgets>
 
-#include <Utils/NException.hpp>
+#include "Utils/NException.hpp"
+#include "Database/DatabaseManager.hpp"
 
 #define QSETTINGS_GROUP_MAINWINDOW_LAYOUT "MainWindow_Layout"
 

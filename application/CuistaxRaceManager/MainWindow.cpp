@@ -114,7 +114,11 @@ void MainWindow::on_actionNewLocalProject_triggered(void)
 
     try
     {
-        throw NException("Not implemented yet");
+        if (DatabaseManager::createLocalDatabase(dbFilePath))
+        {
+            this->statusBar()->showMessage(
+                    tr("Project successfully created"), 4000);
+        }
     }
     catch(NException const& exception)
     {
