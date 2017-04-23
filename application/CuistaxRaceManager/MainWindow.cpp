@@ -98,3 +98,66 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
     QMainWindow::closeEvent(event);
 }
+
+void MainWindow::on_actionNewLocalProject_triggered(void)
+{
+    // Get new project file path
+    QString dbFilePath = QFileDialog::getSaveFileName(
+                this, tr("Create new local project"), QDir::homePath(),
+                tr("Projet Magnee Cuistax (*.db)"));
+
+    // User canceled (nothing to do)
+    if (dbFilePath.isEmpty())
+    {
+        return;
+    }
+
+    try
+    {
+        throw NException("Not implemented yet");
+    }
+    catch(NException const& exception)
+    {
+        QMessageBox::warning(this, tr("Error when creating local project"),
+                             exception.message());
+    }
+}
+
+void MainWindow::on_actionNewRemoteProject_triggered(void)
+{
+
+}
+
+void MainWindow::on_actionOpenLocalProject_triggered(void)
+{
+    // Get existing project file path
+    QString dbFilePath = QFileDialog::getOpenFileName(
+                this, tr("Open local project"), QDir::homePath(),
+                tr("Projet Magnee Cuistax (*.db)"));
+
+    // User canceled (nothing to do)
+    if (dbFilePath.isEmpty())
+    {
+        return;
+    }
+
+    try
+    {
+        throw NException("Not implemented yet");
+    }
+    catch (NException const& exception)
+    {
+        QMessageBox::warning(this, tr("Error when openning local project"),
+                             exception.message());
+    }
+}
+
+void MainWindow::on_actionOpenRemoteProject_triggered(void)
+{
+
+}
+
+void MainWindow::on_actionHelpProject_triggered(void)
+{
+
+}

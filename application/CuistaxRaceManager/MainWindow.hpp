@@ -71,6 +71,18 @@ class MainWindow : public QMainWindow
          */
         virtual void closeEvent(QCloseEvent* event);
 
+    private slots:
+
+        void on_actionNewLocalProject_triggered(void);
+
+        void on_actionNewRemoteProject_triggered(void);
+
+        void on_actionOpenLocalProject_triggered(void);
+
+        void on_actionOpenRemoteProject_triggered(void);
+
+        void on_actionHelpProject_triggered(void);
+
     private:
 
         // Widgets
