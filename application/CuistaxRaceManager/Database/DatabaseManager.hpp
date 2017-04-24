@@ -48,10 +48,12 @@ class DatabaseManager
          * \brief closeConnection: Close existing database connection
          * \return
          */
-        static bool closeConnection(void);
+        static bool closeConnection(void);       
 
         static bool openLocalDatabase(QString const& databaseFilePath);
         static bool installLocalDatabase(QString const& databaseFilePath);
+
+        static bool openRemoteDatabase(ConnectionOptions const& connectionOptions, bool create = false);
 
         static bool createSchema(DatabaseType databaseType);
 };

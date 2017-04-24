@@ -40,63 +40,9 @@ bool DatabaseManager::createLocalDatabase(QDir const& databaseDir, QString const
 
 bool DatabaseManager::createRemoteDatabase(ConnectionOptions const& connectionOptions)
 {
-    if (!connectionOptions.isValid())
-        throw NException(QObject::tr("Invalid Remote Server Connection"));
-
-    /* ---------------------------------------------------------------------- *
-     *                   Close existing database connection                   *
-     * ---------------------------------------------------------------------- */
-
-    DatabaseManager::closeConnection();
-
-    /* ---------------------------------------------------------------------- *
-     *                              Open Database                             *
-     * ---------------------------------------------------------------------- */
-
-    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName(connectionOptions.hostName());
-    db.setPort(connectionOptions.port());
-    db.setUserName(connectionOptions.userName());
-    db.setPassword(connectionOptions.password());
-
-    if (!db.open())
-        throw NException(QObject::tr("Error when opening connection at ") +
-                         connectionOptions.hostName() + " : " +
-                         db.lastError().text(), db.lastError().NoError);
-
-    /* ---------------------------------------------------------------------- *
-     *                             Create Database                            *
-     * ---------------------------------------------------------------------- */
-
-    bool execSucced(false);
-    QSqlQuery query(db);
-
-    // Delete database if exists
-    execSucced = query.exec("DROP DATABASE IF EXISTS " + connectionOptions.databaseName());
-    if (!execSucced)
-    {
-        throw NException(QObject::tr("Error when deleting existing database ") +
-                         connectionOptions.databaseName() + " : " +
-                         db.lastError().text(), db.lastError().NoError);
-    }
-
-    // Create database
-    execSucced = query.exec("CREATE DATABASE IF NOT EXISTS " + connectionOptions.databaseName());
-    if (!execSucced)
-    {
-        throw NException(QObject::tr("Error when creating database ") +
-                         connectionOptions.databaseName() + " : " +
-                         db.lastError().text(), db.lastError().NoError);
-    }
-
-    // Use the newly created database
-    query.exec("USE " + connectionOptions.databaseName());
-
-    /* ---------------------------------------------------------------------- *
-     *                              Create Schema                             *
-     * ---------------------------------------------------------------------- */
-
-    return createSchema(DatabaseType::MySQL);
+    if (DatabaseManager::openRemoteDatabase(connectionOptions, true))
+        return createSchema(DatabaseType::MySQL);
+    return false;
 }
 
 bool DatabaseManager::closeConnection(void)
@@ -149,6 +95,69 @@ bool DatabaseManager::installLocalDatabase(const QString &databaseFilePath)
     if (DatabaseManager::openLocalDatabase(databaseFilePath))
         return DatabaseManager::createSchema(DatabaseType::SQLite);
     return false;
+}
+
+bool DatabaseManager::openRemoteDatabase(const ConnectionOptions &connectionOptions, bool create)
+{
+    if (!connectionOptions.isValid())
+        throw NException(QObject::tr("Invalid Remote Server Connection"));
+
+    /* ---------------------------------------------------------------------- *
+     *                   Close existing database connection                   *
+     * ---------------------------------------------------------------------- */
+
+    DatabaseManager::closeConnection();
+
+    /* ---------------------------------------------------------------------- *
+     *                              Open Database                             *
+     * ---------------------------------------------------------------------- */
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+    db.setHostName(connectionOptions.hostName());
+    db.setPort(connectionOptions.port());
+    db.setUserName(connectionOptions.userName());
+    db.setPassword(connectionOptions.password());
+
+    // If database already exists
+    if (!create)
+        db.setDatabaseName(connectionOptions.databaseName());
+
+    if (!db.open())
+        throw NException(QObject::tr("Error when opening connection at ") +
+                         connectionOptions.hostName() + " : " +
+                         db.lastError().text(), db.lastError().NoError);
+
+    /* ---------------------------------------------------------------------- *
+     *                       Create and Use new Database                      *
+     * ---------------------------------------------------------------------- */
+    if (create)
+    {
+        bool execSucced(false);
+        QSqlQuery query(db);
+
+        // Delete database if exists
+        execSucced = query.exec("DROP DATABASE IF EXISTS " + connectionOptions.databaseName());
+        if (!execSucced)
+        {
+            throw NException(QObject::tr("Error when deleting existing database ") +
+                             connectionOptions.databaseName() + " : " +
+                             db.lastError().text(), db.lastError().NoError);
+        }
+
+        // Create database
+        execSucced = query.exec("CREATE DATABASE IF NOT EXISTS " + connectionOptions.databaseName());
+        if (!execSucced)
+        {
+            throw NException(QObject::tr("Error when creating database ") +
+                             connectionOptions.databaseName() + " : " +
+                             db.lastError().text(), db.lastError().NoError);
+        }
+
+        // Use the newly created database
+        query.exec("USE " + connectionOptions.databaseName());
+    }
+
+    return true;
 }
 
 bool DatabaseManager::createSchema(DatabaseType databaseType)
