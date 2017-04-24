@@ -15,8 +15,10 @@
 
 #include "Utils/NException.hpp"
 #include "Database/DatabaseManager.hpp"
+#include "Dialogs/DialogRemoteServerInformation.hpp"
 
-#define QSETTINGS_GROUP_MAINWINDOW_LAYOUT "MainWindow_Layout"
+#define SETTINGS_GROUP_MAINWINDOW_LAYOUT "MainWindow_Layout"
+#define SETTINGS_GROUP_REMOTE_CONNECTION "Remote_Server_Connection"
 
 namespace Ui {
     class MainWindow;

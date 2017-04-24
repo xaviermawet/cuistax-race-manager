@@ -11,6 +11,8 @@
 
 #include <QtSql>
 #include <QFile>
+
+#include "ConnectionOptions.hpp"
 #include "Utils/NException.hpp"
 
 /* Common */
@@ -38,7 +40,15 @@ class DatabaseManager
         static bool createLocalDatabase(QDir const& databaseDir = QDir::current(),
                                         QString const& databaseName = DEFAULT_DATABASE_NAME);
 
+        static bool createRemoteDatabase(ConnectionOptions const& connectionOptions);
+
     private:
+
+        /*!
+         * \brief closeConnection: Close existing database connection
+         * \return
+         */
+        static bool closeConnection(void);
 
         static bool openLocalDatabase(QString const& databaseFilePath);
         static bool installLocalDatabase(QString const& databaseFilePath);
