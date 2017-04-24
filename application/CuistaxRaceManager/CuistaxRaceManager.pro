@@ -26,13 +26,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         MainWindow.cpp \
     Utils/NException.cpp \
-    Database/DatabaseManager.cpp
+    Database/DatabaseManager.cpp \
+    Dialogs/DialogRemoteServerInformation.cpp \
+    Database/ConnectionOptions.cpp
 
 HEADERS  += MainWindow.hpp \
     Utils/NException.hpp \
-    Database/DatabaseManager.hpp
+    Database/DatabaseManager.hpp \
+    Dialogs/DialogRemoteServerInformation.hpp \
+    Database/ConnectionOptions.hpp
 
-FORMS    += MainWindow.ui
+FORMS    += MainWindow.ui \
+    Dialogs/DialogRemoteServerInformation.ui
 
 RESOURCES += \
     Resources.qrc
