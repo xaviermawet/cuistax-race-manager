@@ -196,13 +196,16 @@ void MainWindow::on_actionOpenLocalProject_triggered(void)
 
     // User canceled (nothing to do)
     if (dbFilePath.isEmpty())
-    {
         return;
-    }
 
     try
     {
-        throw NException("Not implemented yet");
+        // Open the database
+        if (!DatabaseManager::openExistingDatabase(dbFilePath))
+            throw NException("Make sure the project file exists");
+
+        this->statusBar()->showMessage(
+                    tr("Local project successfully opened"), 4000);
     }
     catch (NException const& exception)
     {

@@ -9,10 +9,61 @@
 #include "DatabaseManager.hpp"
 
 
-bool DatabaseManager::createLocalDatabase(const QString &databaseFilePath)
+bool DatabaseManager::createLocalDatabase(QString const& databaseFilePath)
 {
-    if (!DatabaseManager::installLocalDatabase(databaseFilePath))
+    QString validFilePath = databaseFilePath;
+
+    // Check if the file have the right extension
+    QFileInfo databasefileInfo(databaseFilePath);
+    if (databasefileInfo.suffix().isEmpty())
+        validFilePath = databasefileInfo.fileName().append(DEFAULT_SQLITE_DATABASE_EXTENSION);
+    else if (databasefileInfo.suffix() != DEFAULT_SQLITE_DATABASE_EXTENSION)
+        validFilePath = databasefileInfo.path() + QDir::separator() +
+                databasefileInfo.baseName() + DEFAULT_SQLITE_DATABASE_EXTENSION;
+
+    /* --------------------------------------------------------------------- *
+     *                    Open Database and create schema                    *
+     * --------------------------------------------------------------------- */
+
+    DatabaseManager::openLocalDatabase(databaseFilePath);
+    if (DatabaseManager::createSchema(DatabaseType::SQLite))
+    {
+        // Save database filepath for restoring purposes
+        QSettings settings;
+        settings.setValue(SETTINGKEY_SQLITE_DATABASE_FILEPATH, databaseFilePath);
+
+        // TODO : Save type of database opened
+
+        return true;
+    }
+
+    return false;
+}
+
+bool DatabaseManager::createLocalDatabase(QDir const& databaseDir, QString const& databaseName)
+{
+    return DatabaseManager::createLocalDatabase(databaseDir.filePath(databaseName));
+}
+
+bool DatabaseManager::createRemoteDatabase(ConnectionOptions const& connectionOptions)
+{
+    DatabaseManager::openRemoteDatabase(connectionOptions, true);
+    if (DatabaseManager::createSchema(DatabaseType::MySQL))
+    {
+        // TODO : Save db connection info and type of database opened
+
+        return true;
+    }
+
+    return false;
+}
+
+bool DatabaseManager::openExistingDatabase(QString const& databaseFilePath)
+{
+    if (!QFile::exists(databaseFilePath))
         return false;
+
+    DatabaseManager::openLocalDatabase(databaseFilePath);
 
     // Save database filepath for restoring purposes
     QSettings settings;
@@ -23,26 +74,9 @@ bool DatabaseManager::createLocalDatabase(const QString &databaseFilePath)
     return true;
 }
 
-bool DatabaseManager::createLocalDatabase(QDir const& databaseDir, QString const& databaseName)
+bool DatabaseManager::openExistingDatabase(QDir const& databaseDir, QString const& databaseName)
 {
-
-    QString validDatabaseName = databaseName;
-
-    // Check if the file have the right extension
-    QFileInfo databasefileInfo(databaseName);
-    if (databasefileInfo.suffix().isEmpty() || databasefileInfo.suffix() != DEFAULT_SQLITE_DATABASE_EXTENSION)
-    {
-        validDatabaseName = databasefileInfo.fileName().append(DEFAULT_SQLITE_DATABASE_EXTENSION);
-    }
-
-    return DatabaseManager::createLocalDatabase(databaseDir.filePath(validDatabaseName));
-}
-
-bool DatabaseManager::createRemoteDatabase(ConnectionOptions const& connectionOptions)
-{
-    if (DatabaseManager::openRemoteDatabase(connectionOptions, true))
-        return createSchema(DatabaseType::MySQL);
-    return false;
+    return DatabaseManager::openExistingDatabase(databaseDir.filePath(databaseName));
 }
 
 bool DatabaseManager::closeConnection(void)
@@ -84,17 +118,6 @@ bool DatabaseManager::openLocalDatabase(const QString &dataBaseFilePath)
     db.exec("PRAGMA synchronous  = OFF");
 
     return true;
-}
-
-bool DatabaseManager::installLocalDatabase(const QString &databaseFilePath)
-{
-    /* --------------------------------------------------------------------- *
-     *                             Open Database                             *
-     * --------------------------------------------------------------------- */
-
-    if (DatabaseManager::openLocalDatabase(databaseFilePath))
-        return DatabaseManager::createSchema(DatabaseType::SQLite);
-    return false;
 }
 
 bool DatabaseManager::openRemoteDatabase(const ConnectionOptions &connectionOptions, bool create)
