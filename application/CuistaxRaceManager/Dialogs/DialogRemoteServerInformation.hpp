@@ -11,6 +11,8 @@
 
 #include <QtWidgets>
 
+#define SETTINGS_GROUP_REMOTE_DATABASE_CONNECTION "Remote_Database_Connection"
+
 namespace Ui {
     class DialogRemoteServerInformation;
 }
@@ -46,6 +48,15 @@ class DialogRemoteServerInformation : public QDialog
         QString databaseName(void) const;
         QString userName(void) const;
         QString password(void) const;
+
+    private:
+
+        void saveSettings(void) const;
+        void closeEvent(QCloseEvent* event);
+
+    private slots:
+
+        void on_buttonBox_clicked(QAbstractButton *button);
 
     private:
 

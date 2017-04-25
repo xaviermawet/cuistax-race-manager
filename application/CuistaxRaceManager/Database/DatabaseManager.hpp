@@ -42,9 +42,11 @@ class DatabaseManager
 
         static bool createRemoteDatabase(ConnectionOptions const& connectionOptions);
 
-        static bool openExistingDatabase(QString const& databaseFilePath);
-        static bool openExistingDatabase(QDir const& databaseDir = QDir::current(),
+        static bool openExistingLocalDatabase(QString const& databaseFilePath);
+        static bool openExistingLocalDatabase(QDir const& databaseDir = QDir::current(),
                                          QString const& databaseName = DEFAULT_DATABASE_NAME);
+
+        static bool openExistingRemoteDatabase(ConnectionOptions const& connectionOptions);
 
     private:
 

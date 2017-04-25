@@ -45,10 +45,17 @@
        <property name="maximum">
         <number>999999</number>
        </property>
-       <property name="value">
-        <number>3306</number>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="labelProjectName">
+       <property name="text">
+        <string>Project name</string>
        </property>
       </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="lineEditProjectName"/>
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="labelUserName">
@@ -74,17 +81,17 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="labelProjectName">
-       <property name="text">
-        <string>Project name</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="lineEditProjectName"/>
-     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="checkBoxSaveCredentials">
+     <property name="focusPolicy">
+      <enum>Qt::TabFocus</enum>
+     </property>
+     <property name="text">
+      <string>Save connection information</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">

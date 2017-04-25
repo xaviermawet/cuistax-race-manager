@@ -128,16 +128,6 @@ void MainWindow::on_actionNewRemoteProject_triggered(void)
 {
     DialogRemoteServerInformation dialog;
 
-    // Read remote server connection settings & configure dialog
-    QSettings settings;
-    settings.beginGroup(SETTINGS_GROUP_REMOTE_CONNECTION);
-
-    dialog.setHostName(settings.value("hostname", QString()).toString());
-    dialog.setPort(settings.value("port", 3306).toInt());
-    dialog.setDatabaseName(settings.value("databasename", QString()).toString());
-    dialog.setUserName(settings.value("username", QString()).toString());
-    dialog.setPassword(settings.value("password", QString()).toString());
-
     // Open settings dialog
     if (dialog.exec() != QDialog::Accepted) // User canceled
         return;
@@ -174,17 +164,6 @@ void MainWindow::on_actionNewRemoteProject_triggered(void)
         QMessageBox::warning(this, tr("Error when creating remote project"),
                              exception.message());
     }
-
-    // Save remote server connection settings
-    settings.setValue("hostname", dialog.hostName());
-    settings.setValue("port", dialog.port());
-    settings.setValue("databasename", dialog.databaseName());
-    settings.setValue("username", dialog.userName());
-    settings.setValue("password", dialog.password());
-
-    settings.endGroup();
-
-    // getter : create database
 }
 
 void MainWindow::on_actionOpenLocalProject_triggered(void)
@@ -201,7 +180,7 @@ void MainWindow::on_actionOpenLocalProject_triggered(void)
     try
     {
         // Open the database
-        if (!DatabaseManager::openExistingDatabase(dbFilePath))
+        if (!DatabaseManager::openExistingLocalDatabase(dbFilePath))
             throw NException("Make sure the project file exists");
 
         this->statusBar()->showMessage(
@@ -216,7 +195,44 @@ void MainWindow::on_actionOpenLocalProject_triggered(void)
 
 void MainWindow::on_actionOpenRemoteProject_triggered(void)
 {
+    DialogRemoteServerInformation dialog;
 
+    // Open settings dialog
+    if (dialog.exec() != QDialog::Accepted) // User canceled
+        return;
+
+    try
+    {
+        // Check remote server credentials
+        if (dialog.hostName().isEmpty())
+            throw NException("Invalid host name");
+        if (dialog.port() < 0)
+            throw NException("Invalid port");
+        if (dialog.databaseName().isEmpty())
+            throw NException("Invalid database name");
+        if (dialog.userName().isEmpty())
+            throw NException("Invalid user name");
+        if (dialog.password().isEmpty())
+            throw NException("Invalid password");
+
+        // Create remote database
+        ConnectionOptions connectionOptions;
+        connectionOptions.setHostName(dialog.hostName());
+        connectionOptions.setPort(dialog.port());
+        connectionOptions.setDatabaseName(dialog.databaseName());
+        connectionOptions.setUserName(dialog.userName());
+        connectionOptions.setPassword(dialog.password());
+
+        if (!DatabaseManager::openExistingRemoteDatabase(connectionOptions))
+            throw NException("Remote database not opened");
+
+        this->statusBar()->showMessage(tr("Remote project successfully opened"), 4000);
+    }
+    catch(NException const& exception)
+    {
+        QMessageBox::warning(this, tr("Error when creating remote project"),
+                             exception.message());
+    }
 }
 
 void MainWindow::on_actionHelpProject_triggered(void)

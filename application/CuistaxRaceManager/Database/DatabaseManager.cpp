@@ -58,7 +58,7 @@ bool DatabaseManager::createRemoteDatabase(ConnectionOptions const& connectionOp
     return false;
 }
 
-bool DatabaseManager::openExistingDatabase(QString const& databaseFilePath)
+bool DatabaseManager::openExistingLocalDatabase(QString const& databaseFilePath)
 {
     if (!QFile::exists(databaseFilePath))
         return false;
@@ -74,9 +74,18 @@ bool DatabaseManager::openExistingDatabase(QString const& databaseFilePath)
     return true;
 }
 
-bool DatabaseManager::openExistingDatabase(QDir const& databaseDir, QString const& databaseName)
+bool DatabaseManager::openExistingLocalDatabase(QDir const& databaseDir, QString const& databaseName)
 {
-    return DatabaseManager::openExistingDatabase(databaseDir.filePath(databaseName));
+    return DatabaseManager::openExistingLocalDatabase(databaseDir.filePath(databaseName));
+}
+
+bool DatabaseManager::openExistingRemoteDatabase(const ConnectionOptions &connectionOptions)
+{
+    DatabaseManager::openRemoteDatabase(connectionOptions);
+
+    // TODO : save settings and database type
+
+    return true;
 }
 
 bool DatabaseManager::closeConnection(void)
