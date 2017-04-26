@@ -71,8 +71,10 @@ void MainWindow::readLayoutSettings(void)
     settings.beginGroup(SETTINGS_GROUP_MAINWINDOW_LAYOUT);
 
     this->restoreGeometry(settings.value("geometry").toByteArray());
+    this->ui->splitterMain->restoreState(
+                settings.value("splitterMain").toByteArray());
 
-    // Other MainWindow layout settings ...
+    // Other MainWindow Settings ...
 
     settings.endGroup();
 }
@@ -85,8 +87,9 @@ void MainWindow::writeLayoutSettings(void) const
 
     //settings.setValue("isMaximized",this->isMaximized());
     settings.setValue("geometry", this->saveGeometry());
+    settings.setValue("splitterMain", this->ui->splitterMain->saveState());
 
-    // Other MainWindow layout settings ...
+    // Other MainWindow Settings ...
 
     settings.endGroup();
 }

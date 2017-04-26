@@ -3,4 +3,13 @@
         <file alias="MySQL-database-schema">Resources/SQL/MySQL-database-schema.sql</file>
         <file alias="SQLite-database-schema">Resources/SQL/SQLite-database-schema.sql</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file alias="create-database">Resources/Icons/create-database.svg</file>
+        <file alias="create-file">Resources/Icons/create-file.svg</file>
+        <file alias="leaderboard">Resources/Icons/leaderboard.svg</file>
+        <file alias="minus">Resources/Icons/minus.svg</file>
+        <file alias="open-database">Resources/Icons/open-database.svg</file>
+        <file alias="open-file">Resources/Icons/open-file.svg</file>
+        <file alias="plus">Resources/Icons/plus.svg</file>
+    </qresource>
 </RCC>
