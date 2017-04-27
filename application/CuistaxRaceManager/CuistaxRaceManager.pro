@@ -28,13 +28,15 @@ SOURCES += main.cpp\
     Utils/NException.cpp \
     Database/DatabaseManager.cpp \
     Dialogs/DialogRemoteServerInformation.cpp \
-    Database/ConnectionOptions.cpp
+    Database/ConnectionOptions.cpp \
+    Database/SqlTableModelColumnsEditable.cpp
 
 HEADERS  += MainWindow.hpp \
     Utils/NException.hpp \
     Database/DatabaseManager.hpp \
     Dialogs/DialogRemoteServerInformation.hpp \
-    Database/ConnectionOptions.hpp
+    Database/ConnectionOptions.hpp \
+    Database/SqlTableModelColumnsEditable.hpp
 
 FORMS    += MainWindow.ui \
     Dialogs/DialogRemoteServerInformation.ui
