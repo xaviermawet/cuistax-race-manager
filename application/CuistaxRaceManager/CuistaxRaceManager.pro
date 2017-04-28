@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,9 +25,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         MainWindow.cpp \
-    Utils/NException.cpp
+    Utils/NException.cpp \
+    Database/DatabaseManager.cpp \
+    Dialogs/DialogRemoteServerInformation.cpp \
+    Database/ConnectionOptions.cpp \
+    Database/SqlTableModelColumnsEditable.cpp
 
 HEADERS  += MainWindow.hpp \
-    Utils/NException.hpp
+    Utils/NException.hpp \
+    Database/DatabaseManager.hpp \
+    Dialogs/DialogRemoteServerInformation.hpp \
+    Database/ConnectionOptions.hpp \
+    Database/SqlTableModelColumnsEditable.hpp
 
-FORMS    += MainWindow.ui
+FORMS    += MainWindow.ui \
+    Dialogs/DialogRemoteServerInformation.ui
+
+RESOURCES += \
+    Resources.qrc

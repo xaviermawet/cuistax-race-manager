@@ -13,9 +13,18 @@
 // Qt GUI and Qt Widgets modules
 #include <QtWidgets>
 
-#include <Utils/NException.hpp>
+// Utils
+#include "Utils/NException.hpp"
 
-#define QSETTINGS_GROUP_MAINWINDOW_LAYOUT "MainWindow_Layout"
+// Database
+#include "Database/DatabaseManager.hpp"
+#include "Database/SqlTableModelColumnsEditable.hpp"
+
+// Dialogs
+#include "Dialogs/DialogRemoteServerInformation.hpp"
+
+#define SETTINGS_GROUP_MAINWINDOW_LAYOUT "MainWindow_Layout"
+#define SETTINGS_GROUP_REMOTE_CONNECTION "Remote_Server_Connection"
 
 namespace Ui {
     class MainWindow;
@@ -39,6 +48,11 @@ class MainWindow : public QMainWindow
         virtual ~MainWindow(void);
 
     protected:
+
+        /*!
+         * \brief createTeamListModel : create a list model based on table TEAM
+         */
+        void createTeamTabeModel(void);
 
         /*!
          * \brief centerOnScreen: center the MainWindow
@@ -71,10 +85,30 @@ class MainWindow : public QMainWindow
          */
         virtual void closeEvent(QCloseEvent* event);
 
+        /*!
+         * \brief refreshAllDatabaseModels: Deletes and creates all models that depend on database
+         */
+        void refreshAllDatabaseModels(void);
+
+    private slots:
+
+        void on_actionNewLocalProject_triggered(void);
+
+        void on_actionNewRemoteProject_triggered(void);
+
+        void on_actionOpenLocalProject_triggered(void);
+
+        void on_actionOpenRemoteProject_triggered(void);
+
+        void on_actionHelpProject_triggered(void);
+
     private:
 
         // Widgets
         Ui::MainWindow *ui;
+
+        // Models
+        SqlTableModelColumnsEditable* _teamTableModel;
 };
 
 #endif /* __MAINWINDOW_HPP__ */
