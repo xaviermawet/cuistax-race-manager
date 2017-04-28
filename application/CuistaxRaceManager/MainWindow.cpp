@@ -25,16 +25,55 @@ MainWindow::MainWindow(QWidget* parent) :
 
     // Restore previous MainWindows layout settings
     this->readSettings();
+
+    // Connect to previous database if exists
+    DatabaseManager::DatabaseType databaseType = DatabaseManager::DatabaseType::UNKNOWN;
+    if (DatabaseManager::restorePreviousDataBase(databaseType))
+    {
+        this->refreshAllDatabaseModels();
+
+        bool localDatabase = databaseType == DatabaseManager::DatabaseType::SQLite;
+
+        // Display project file path in the main window title
+        QFileInfo dbFile(QSqlDatabase::database().databaseName());
+        this->setWindowTitle(tr("Cuistax Race Manager - Project: %1 ").arg(dbFile.baseName()));
+
+        this->ui->statusBar->showMessage(
+                    tr("Latest %1 project automatically loaded").arg(localDatabase ? "local" : "remote"), 4000);
+    }
 }
 
 MainWindow::~MainWindow(void)
 {
+    // Widgets
     delete this->ui;
+
+    // Models
+    delete this->_teamTableModel;
 }
 
 /* ------------------------------------------------------------------------- *
  * PROTECTED METHODS                                                         *
  * ------------------------------------------------------------------------- */
+
+void MainWindow::createTeamTabeModel(void)
+{
+    if (this->_teamTableModel != NULL)
+        delete this->_teamTableModel;
+
+    // Create team table model
+    this->_teamTableModel = new SqlTableModelColumnsEditable(this);
+    this->_teamTableModel->setTable("team");
+    this->_teamTableModel->setHeaderData(0, Qt::Horizontal, tr("Cuistax number"));
+    this->_teamTableModel->setHeaderData(1, Qt::Horizontal, tr("Team"));
+    this->_teamTableModel->setColumnEditable(0, false);
+
+    // Assign table model to table view
+    this->ui->tableViewTeams->setModel(this->_teamTableModel);
+
+    // Update data
+    this->_teamTableModel->select();
+}
 
 void MainWindow::centerOnScreen(void)
 {
@@ -100,6 +139,14 @@ void MainWindow::closeEvent(QCloseEvent* event)
     this->writeSettings();
 
     QMainWindow::closeEvent(event);
+}
+
+void MainWindow::refreshAllDatabaseModels(void)
+{
+    // Create all sql models base on batabase's table(s)
+    this->createTeamTabeModel();
+
+    // TODO : Manage other models
 }
 
 void MainWindow::on_actionNewLocalProject_triggered(void)
@@ -185,6 +232,8 @@ void MainWindow::on_actionOpenLocalProject_triggered(void)
         // Open the database
         if (!DatabaseManager::openExistingLocalDatabase(dbFilePath))
             throw NException("Make sure the project file exists");
+
+        this->refreshAllDatabaseModels();
 
         this->statusBar()->showMessage(
                     tr("Local project successfully opened"), 4000);

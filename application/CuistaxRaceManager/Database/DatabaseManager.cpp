@@ -8,6 +8,42 @@
 
 #include "DatabaseManager.hpp"
 
+bool DatabaseManager::restorePreviousDataBase(DatabaseType& databaseType)
+{
+    QSettings settings;
+    settings.beginGroup(SETTINGS_GROUP_DATABASEMANAGER);
+
+    if (settings.contains(SETTING_KEY_LAST_OPENED_DATABASE_TYPE))
+    {
+        databaseType = (DatabaseType)settings.value(SETTING_KEY_LAST_OPENED_DATABASE_TYPE).toInt();
+
+        switch (databaseType)
+        {
+            case DatabaseType::SQLite:
+            {
+                settings.beginGroup(SETTINGS_GROUP_SQLITE);
+                QString dbFilePath = settings.value(SETTINGKEY_SQLITE_DATABASE_FILEPATH, QString()).toString();
+                return DatabaseManager::openExistingLocalDatabase(dbFilePath);
+            }
+            case DatabaseType::MySQL:
+            {
+                settings.beginGroup(SETTINGS_GROUP_MYSQL);
+                ConnectionOptions connectionOptions;
+                connectionOptions.setHostName(settings.value(SETTING_KEY_MYSQL_HOSTNAME, QString()).toString());
+                connectionOptions.setPort(settings.value(SETTING_KEY_MYSQL_PORT, -1).toInt());
+                connectionOptions.setDatabaseName(settings.value(SETTING_KEY_MYSQL_DATABASE_NAME, QString()).toString());
+                connectionOptions.setUserName(settings.value(SETTING_KEY_MYSQL_USERNAME, QString()).toString());
+                connectionOptions.setPassword(settings.value(SETTING_KEY_MYSQL_PASSWORD, QString()).toString());
+                return DatabaseManager::openExistingRemoteDatabase(connectionOptions);
+            }
+            default:
+                break;
+        }
+    }
+
+    settings.endGroup();
+    return false;
+}
 
 bool DatabaseManager::createLocalDatabase(QString const& databaseFilePath)
 {
@@ -26,18 +62,13 @@ bool DatabaseManager::createLocalDatabase(QString const& databaseFilePath)
      * --------------------------------------------------------------------- */
 
     DatabaseManager::openLocalDatabase(databaseFilePath);
-    if (DatabaseManager::createSchema(DatabaseType::SQLite))
-    {
-        // Save database filepath for restoring purposes
-        QSettings settings;
-        settings.setValue(SETTINGKEY_SQLITE_DATABASE_FILEPATH, databaseFilePath);
+    if (!DatabaseManager::createSchema(DatabaseType::SQLite))
+        return false;
 
-        // TODO : Save type of database opened
+    // Save database settings
+    DatabaseManager::saveDatabaseManagerSettings();
 
-        return true;
-    }
-
-    return false;
+    return true;
 }
 
 bool DatabaseManager::createLocalDatabase(QDir const& databaseDir, QString const& databaseName)
@@ -48,14 +79,13 @@ bool DatabaseManager::createLocalDatabase(QDir const& databaseDir, QString const
 bool DatabaseManager::createRemoteDatabase(ConnectionOptions const& connectionOptions)
 {
     DatabaseManager::openRemoteDatabase(connectionOptions, true);
-    if (DatabaseManager::createSchema(DatabaseType::MySQL))
-    {
-        // TODO : Save db connection info and type of database opened
+    if (!DatabaseManager::createSchema(DatabaseType::MySQL))
+        return false;
 
-        return true;
-    }
+    // Save database settings
+    DatabaseManager::saveDatabaseManagerSettings();
 
-    return false;
+    return true;
 }
 
 bool DatabaseManager::openExistingLocalDatabase(QString const& databaseFilePath)
@@ -63,13 +93,11 @@ bool DatabaseManager::openExistingLocalDatabase(QString const& databaseFilePath)
     if (!QFile::exists(databaseFilePath))
         return false;
 
-    DatabaseManager::openLocalDatabase(databaseFilePath);
+    if (!DatabaseManager::openLocalDatabase(databaseFilePath))
+        return false;
 
-    // Save database filepath for restoring purposes
-    QSettings settings;
-    settings.setValue(SETTINGKEY_SQLITE_DATABASE_FILEPATH, databaseFilePath);
-
-    // TODO : Save type of database opened
+    // Save database settings
+    DatabaseManager::saveDatabaseManagerSettings();
 
     return true;
 }
@@ -81,9 +109,11 @@ bool DatabaseManager::openExistingLocalDatabase(QDir const& databaseDir, QString
 
 bool DatabaseManager::openExistingRemoteDatabase(const ConnectionOptions &connectionOptions)
 {
-    DatabaseManager::openRemoteDatabase(connectionOptions);
+    if (!DatabaseManager::openRemoteDatabase(connectionOptions))
+        return false;
 
-    // TODO : save settings and database type
+    // Save database settings
+    DatabaseManager::saveDatabaseManagerSettings();
 
     return true;
 }
@@ -229,4 +259,40 @@ bool DatabaseManager::createSchema(DatabaseType databaseType)
     schemaFile.close();
 
     return commitSucced;
+}
+
+void DatabaseManager::saveDatabaseManagerSettings(void)
+{
+    QSqlDatabase db = QSqlDatabase::database();
+    DatabaseType dbType = db.driverName() == "QSQLITE" ? DatabaseType::SQLite : DatabaseType::MySQL;
+
+    QSettings settings;
+
+    settings.beginGroup(SETTINGS_GROUP_DATABASEMANAGER);
+
+    // Save current database type
+    settings.setValue(SETTING_KEY_LAST_OPENED_DATABASE_TYPE, dbType);
+
+    // Save database type depending settings
+    switch (dbType) {
+        case DatabaseType::SQLite:
+            settings.beginGroup(SETTINGS_GROUP_SQLITE);
+            settings.setValue(SETTINGKEY_SQLITE_DATABASE_FILEPATH, db.databaseName());
+            settings.endGroup(); // End of SETTINGS_GROUP_SQLITE
+            break;
+        case DatabaseType::MySQL:
+            settings.beginGroup(SETTINGS_GROUP_MYSQL);
+            settings.setValue(SETTING_KEY_MYSQL_HOSTNAME, db.hostName());
+            settings.setValue(SETTING_KEY_MYSQL_PORT, db.port());
+            settings.setValue(SETTING_KEY_MYSQL_DATABASE_NAME, db.databaseName());
+            settings.setValue(SETTING_KEY_MYSQL_USERNAME, db.userName());
+            settings.setValue(SETTING_KEY_MYSQL_PASSWORD, db.password());
+            settings.endGroup(); // End of SETTINGS_GROUP_MYSQL
+            break;
+        default:
+            // Unknow database type - Nothing to do ...
+            break;
+    }
+
+    settings.endGroup(); // end of SETTINGS_GROUP_DATABASEMANAGER
 }

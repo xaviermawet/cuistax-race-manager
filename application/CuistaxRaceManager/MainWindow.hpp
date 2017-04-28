@@ -13,8 +13,14 @@
 // Qt GUI and Qt Widgets modules
 #include <QtWidgets>
 
+// Utils
 #include "Utils/NException.hpp"
+
+// Database
 #include "Database/DatabaseManager.hpp"
+#include "Database/SqlTableModelColumnsEditable.hpp"
+
+// Dialogs
 #include "Dialogs/DialogRemoteServerInformation.hpp"
 
 #define SETTINGS_GROUP_MAINWINDOW_LAYOUT "MainWindow_Layout"
@@ -42,6 +48,11 @@ class MainWindow : public QMainWindow
         virtual ~MainWindow(void);
 
     protected:
+
+        /*!
+         * \brief createTeamListModel : create a list model based on table TEAM
+         */
+        void createTeamTabeModel(void);
 
         /*!
          * \brief centerOnScreen: center the MainWindow
@@ -74,6 +85,11 @@ class MainWindow : public QMainWindow
          */
         virtual void closeEvent(QCloseEvent* event);
 
+        /*!
+         * \brief refreshAllDatabaseModels: Deletes and creates all models that depend on database
+         */
+        void refreshAllDatabaseModels(void);
+
     private slots:
 
         void on_actionNewLocalProject_triggered(void);
@@ -90,6 +106,9 @@ class MainWindow : public QMainWindow
 
         // Widgets
         Ui::MainWindow *ui;
+
+        // Models
+        SqlTableModelColumnsEditable* _teamTableModel;
 };
 
 #endif /* __MAINWINDOW_HPP__ */
