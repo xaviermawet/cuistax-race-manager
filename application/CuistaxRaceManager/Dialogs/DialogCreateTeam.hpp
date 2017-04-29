@@ -56,6 +56,12 @@ class DialogCreateTeam : public QDialog
          */
         void updateSaveButtonVisibility(void);
 
+        /*!
+         * \brief enableFields: Enable or disable form fields
+         * \param enabled: enable state
+         */
+        void enableFields(bool enabled);
+
     private:
 
         /*!

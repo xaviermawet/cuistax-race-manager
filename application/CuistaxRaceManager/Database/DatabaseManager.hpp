@@ -66,6 +66,7 @@ class DatabaseManager
         static QSqlQuery execQuery(QString const& queryString,
                                    QVariantList const& values = QVariantList(),
                                    bool forwardOnly = true);
+        static void execQuery(QSqlQuery& query, bool forwardOnly = true);
         static void execTransaction(QSqlQuery& query);
         static QSqlQuery execTransaction(QString const& queryString,
                                          QVariantList const& values = QVariantList(),

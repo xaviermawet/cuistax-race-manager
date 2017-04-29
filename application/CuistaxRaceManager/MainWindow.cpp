@@ -307,7 +307,7 @@ void MainWindow::on_actionCreateTeam_triggered(void)
     try
     {
         // Insert new team in database
-        DatabaseManager::execTransaction(insertQuery);
+        DatabaseManager::execQuery(insertQuery);
         this->statusBar()->showMessage(
                     tr("Team \"%1\" created").arg(dial.teamName()), 4000);
 

@@ -16,6 +16,7 @@ DialogCreateTeam::DialogCreateTeam(QWidget* parent) :
 {
     // GUI Configuration
     this->ui->setupUi(this);
+    this->enableFields(false);
 
     // TODO : threading get data
     QtConcurrent::run(this, &DialogCreateTeam::readDataFromDatabase);
@@ -44,6 +45,19 @@ void DialogCreateTeam::updateSaveButtonVisibility(void)
             QDialogButtonBox::Cancel);
 }
 
+void DialogCreateTeam::enableFields(bool enabled)
+{
+    // Team name
+    this->ui->labelTeamName->setEnabled(enabled);
+    this->ui->labelTeamNameMessage->setEnabled(enabled);
+    this->ui->lineEditTeamName->setEnabled(enabled);
+
+    // Cuistax number
+    this->ui->labelCuistaxNumber->setEnabled(enabled);
+    this->ui->labelCuistaxNumberMessage->setEnabled(enabled);
+    this->ui->spinBoxCuistaxNumber->setEnabled(enabled);
+}
+
 void DialogCreateTeam::readDataFromDatabase(void)
 {
     // Clear databse data
@@ -61,6 +75,8 @@ void DialogCreateTeam::readDataFromDatabase(void)
     }
 
     qDebug() << "[DialogCreateTeam] readDataFromDatabase DONE";
+
+    this->enableFields(true);
 }
 
 void DialogCreateTeam::on_lineEditTeamName_textEdited(QString const& teamName)

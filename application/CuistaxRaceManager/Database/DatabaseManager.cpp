@@ -126,13 +126,18 @@ QSqlQuery DatabaseManager::execQuery(QString const& queryString, QVariantList co
     foreach (QVariant value, values)
         query.addBindValue(value);
 
+    DatabaseManager::execQuery(query, forwardOnly);
+
+    return query; // Implicit sharing
+}
+
+void DatabaseManager::execQuery(QSqlQuery &query, bool forwardOnly)
+{
     query.setForwardOnly(forwardOnly);
 
     if (!query.exec())
         throw NException(QObject::tr("Error when executing query : ")
                          + query.lastQuery() + " " + query.lastError().text());
-
-    return query; // Implicit sharing
 }
 
 void DatabaseManager::execTransaction(QSqlQuery& query)

@@ -117,14 +117,14 @@ void DialogRemoteServerInformation::saveSettings(void) const
 
 void DialogRemoteServerInformation::closeEvent(QCloseEvent* event)
 {
-    Q_UNUSED(event)
+    Q_UNUSED(event);
 
     this->saveSettings();
 }
 
 void DialogRemoteServerInformation::on_buttonBox_clicked(QAbstractButton* button)
 {
-    Q_UNUSED(button)
+    Q_UNUSED(button);
 
     this->saveSettings();
 }
