@@ -11,5 +11,11 @@
         <file alias="open-database">Resources/Icons/open-database.svg</file>
         <file alias="open-file">Resources/Icons/open-file.svg</file>
         <file alias="plus">Resources/Icons/plus.svg</file>
+        <file alias="pause">Resources/Icons/pause.svg</file>
+        <file alias="play">Resources/Icons/play.svg</file>
+        <file alias="resume">Resources/Icons/resume.svg</file>
+        <file alias="skipt-to-start">Resources/Icons/skip-to-start.svg</file>
+        <file alias="stop">Resources/Icons/stop.svg</file>
+        <file alias="reset">Resources/Icons/reset.svg</file>
     </qresource>
 </RCC>
