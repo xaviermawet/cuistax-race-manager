@@ -1,10 +1,16 @@
 #include "NSpacer.hpp"
 
-NSpacer::NSpacer(QWidget* parent) : QWidget(parent)
+NSpacer::NSpacer(int width, int height, QWidget* parent) :
+    NSpacer(QSize(width, height), parent)
+{
+    // Nothing to do here ...
+}
+
+NSpacer::NSpacer(QSize size, QWidget* parent) : QWidget(parent)
 {
     // GUI Configuration
-    this->resize(QSize(0, 0));
-    this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    this->resize(size);
+    this->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 }
 
 NSpacer::~NSpacer(void)

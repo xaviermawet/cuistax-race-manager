@@ -8,7 +8,8 @@ class NSpacer : public QWidget
     Q_OBJECT
     public:
 
-        explicit NSpacer(QWidget* parent = NULL);
+        explicit NSpacer(int width, int height, QWidget* parent = NULL);
+        explicit NSpacer(QSize size, QWidget* parent = NULL);
         virtual ~NSpacer(void);
 
     signals:
