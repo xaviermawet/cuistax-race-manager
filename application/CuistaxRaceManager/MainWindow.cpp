@@ -14,7 +14,8 @@
  * ------------------------------------------------------------------------- */
 
 MainWindow::MainWindow(QWidget* parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), _stopWatch(NULL)
+    QMainWindow(parent), ui(new Ui::MainWindow), _stopWatch(NULL),
+    _labelRaceList(NULL), _comboBoxRaceList(NULL)
 {
     QCoreApplication::setOrganizationName("Nakim");
     QCoreApplication::setOrganizationDomain("nakim.be");
@@ -52,6 +53,10 @@ MainWindow::~MainWindow(void)
     delete this->ui;
     delete this->_stopWatch;
 
+    qDeleteAll(this->_spacersRaceList);
+    delete this->_labelRaceList;
+    delete this->_comboBoxRaceList;
+
     // Models
     delete this->_teamTableModel;
 }
@@ -68,7 +73,39 @@ void MainWindow::createToolBar(void)
      *                           Race list combobox                           *
      * ---------------------------------------------------------------------- */
 
-    // TODO
+    if (this->_comboBoxRaceList != NULL)
+        delete this->_comboBoxRaceList;
+    if (this->_labelRaceList != NULL)
+        delete this->_labelRaceList;
+    if (!this->_spacersRaceList.empty())
+    {
+        qDeleteAll(this->_spacersRaceList);
+        this->_spacersRaceList.clear();
+    }
+
+    // Create combobox
+    this->_comboBoxRaceList = new QComboBox(this);
+    this->_comboBoxRaceList->setEditable(false);
+    this->_comboBoxRaceList->setSizePolicy(QSizePolicy::Expanding,
+                                           QSizePolicy::Maximum);
+    // Create label
+    this->_labelRaceList = new QLabel(tr("Races:"), this);
+
+    // Create spacers
+    NSpacer* labelLeadingSpacer = new NSpacer(12, 0, this);
+    NSpacer* comboboxLeadingSpacer = new NSpacer(12, 0, this);
+    this->_spacersRaceList.append(labelLeadingSpacer);
+    this->_spacersRaceList.append(comboboxLeadingSpacer);
+
+    // Add the label and the comboBox to the mainToolBar
+    this->ui->mainToolBar->addWidget(labelLeadingSpacer);
+    this->ui->mainToolBar->addWidget(this->_labelRaceList);
+    this->ui->mainToolBar->addWidget(comboboxLeadingSpacer);
+    this->ui->mainToolBar->addWidget(this->_comboBoxRaceList);
+
+    // Update the current race id and update all the needed tables
+    connect(this->_comboBoxRaceList, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(currentRaceChanged(int)));
 
     /* ---------------------------------------------------------------------- *
      *                                Stopwatch                               *
@@ -368,4 +405,9 @@ void MainWindow::raceStarted(void)
     // TODO: Delete all information about "previous laps"
 
     // TODO : create lap object for each team that will save the last lap information
+}
+
+void MainWindow::currentRaceChanged(int currentRaceIndex)
+{
+    // TODO
 }

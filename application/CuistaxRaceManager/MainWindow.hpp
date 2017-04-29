@@ -26,6 +26,7 @@
 
 // Widgete
 #include "Widgets/NStopWatch.hpp"
+#include "Widgets/NSpacer.hpp"
 
 #define SETTINGS_GROUP_MAINWINDOW_LAYOUT "MainWindow_Layout"
 #define SETTINGS_GROUP_REMOTE_CONNECTION "Remote_Server_Connection"
@@ -113,12 +114,16 @@ class MainWindow : public QMainWindow
 
         // Race Management
         void raceStarted(void);
+        void currentRaceChanged(int currentRaceIndex);
 
     private:
 
         // Widgets
-        Ui::MainWindow *ui;
-        NStopWatch* _stopWatch;
+        Ui::MainWindow  *ui;
+        NStopWatch*     _stopWatch;
+        QList<NSpacer*> _spacersRaceList;
+        QLabel*         _labelRaceList;
+        QComboBox*      _comboBoxRaceList;
 
         // Models
         SqlTableModelColumnsEditable* _teamTableModel;
