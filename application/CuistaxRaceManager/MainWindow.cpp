@@ -14,14 +14,17 @@
  * ------------------------------------------------------------------------- */
 
 MainWindow::MainWindow(QWidget* parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow)
+    QMainWindow(parent), ui(new Ui::MainWindow), _stopWatch(NULL)
 {
     QCoreApplication::setOrganizationName("Nakim");
     QCoreApplication::setOrganizationDomain("nakim.be");
     QCoreApplication::setApplicationName("CuistaxRaceManager");
 
-    // GUI Configuration
+    // GUI Configuration (widgets)
     this->ui->setupUi(this);
+    this->createToolBar();
+    // TODO: createRaceTableContextMenu
+    // TODO: createRankingModel
 
     // Restore previous MainWindows layout settings
     this->readSettings();
@@ -47,6 +50,7 @@ MainWindow::~MainWindow(void)
 {
     // Widgets
     delete this->ui;
+    delete this->_stopWatch;
 
     // Models
     delete this->_teamTableModel;
@@ -55,6 +59,35 @@ MainWindow::~MainWindow(void)
 /* ------------------------------------------------------------------------- *
  * PROTECTED METHODS                                                         *
  * ------------------------------------------------------------------------- */
+
+void MainWindow::createToolBar(void)
+{
+    // Mainly developed with Qt Designer
+
+    /* ---------------------------------------------------------------------- *
+     *                           Race list combobox                           *
+     * ---------------------------------------------------------------------- */
+
+    // TODO
+
+    /* ---------------------------------------------------------------------- *
+     *                                Stopwatch                               *
+     * ---------------------------------------------------------------------- */
+    if (this->_stopWatch != NULL)
+        delete this->_stopWatch;
+
+    // Create stopwatch
+    this->_stopWatch = new NStopWatch(this);
+
+    // Add the stopwatch to the mainToolBar
+    this->ui->mainToolBar->addWidget(this->_stopWatch);
+    //this->_stopWatch->setEnabled(false);
+
+    // Informs the MainWindow that the race started
+    connect(this->_stopWatch, SIGNAL(started()), this, SLOT(raceStarted()));
+
+    // TODO : if the race changed, the stopwatch is stopped
+}
 
 void MainWindow::createTeamTabeModel(void)
 {
@@ -311,6 +344,14 @@ void MainWindow::on_actionCreateTeam_triggered(void)
         this->statusBar()->showMessage(
                     tr("Team \"%1\" created").arg(dial.teamName()), 4000);
 
+        // If the race has already started
+        if (this->_stopWatch->isActive() || this->_stopWatch->isInPause())
+        {
+            // TOOD: this->_previousLapsInformation[dial.cuistaxNumber()] = Lap();
+        }
+
+        // TODO : refresh other ???
+
         // Refresh team list (table)
         this->_teamTableModel->select();
     }
@@ -320,4 +361,11 @@ void MainWindow::on_actionCreateTeam_triggered(void)
                     this, tr("Unable to create team %1").arg(dial.teamName()),
                     exception.message());
     }
+}
+
+void MainWindow::raceStarted(void)
+{
+    // TODO: Delete all information about "previous laps"
+
+    // TODO : create lap object for each team that will save the last lap information
 }
