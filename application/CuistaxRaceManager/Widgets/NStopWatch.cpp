@@ -10,15 +10,18 @@
 #include "ui_NStopWatch.h"
 
 NStopWatch::NStopWatch(QWidget* parent) :
-    QWidget(parent), ui(new Ui::NStopWatch)
+    QWidget(parent), ui(new Ui::NStopWatch),
+    _pause(false), _refreshTimer(NULL)
 {
     // GUI Configuration
     this->ui->setupUi(this);
 
     // Timer configuration
     this->_refreshTimer = new QTimer(this);
-    this->_refreshTimer->setInterval(1000);
     connect(this->_refreshTimer, SIGNAL(timeout()), this, SLOT(refreshWatch()));
+
+    // Start timer
+    this->_refreshTimer->setInterval(1000);
 }
 
 NStopWatch::~NStopWatch(void)
