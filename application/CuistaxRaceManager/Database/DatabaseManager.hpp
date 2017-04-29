@@ -11,6 +11,7 @@
 
 #include <QtSql>
 #include <QFile>
+#include <QString>
 
 #include "ConnectionOptions.hpp"
 #include "Utils/NException.hpp"

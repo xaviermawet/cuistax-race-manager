@@ -142,20 +142,25 @@ void DatabaseManager::execQuery(QSqlQuery &query, bool forwardOnly)
 
 void DatabaseManager::execTransaction(QSqlQuery& query)
 {
-    QSqlDriver* sqlDriver = QSqlDatabase::database().driver();
+    QSqlDatabase db = QSqlDatabase::database();
 
-    sqlDriver->beginTransaction();
+    // Begin transaction
+    bool transactionSucceeded = db.transaction();
+
+    if (!transactionSucceeded)
+        throw NException(QObject::tr("%1 driver doesn't support transactions")
+                         .arg(db.driverName()));
 
     if(!query.exec())
     {
-        sqlDriver->rollbackTransaction();
-        throw NException(QObject::tr("Request failed : ")
+        db.rollback();
+        throw NException(QObject::tr("Rollback - Request failed : ")
                          + query.lastQuery() + query.lastError().text());
     }
 
     // Try to commit transaction
-    if(!sqlDriver->commitTransaction())
-        throw NException(QObject::tr("Data validation failed"));
+    if(!db.commit())
+        throw NException(QObject::tr("Data commit failed"));
 }
 
 QSqlQuery DatabaseManager::execTransaction(QString const& queryString, QVariantList const& values, bool forwardOnly)
