@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -29,17 +29,20 @@ SOURCES += main.cpp\
     Database/DatabaseManager.cpp \
     Dialogs/DialogRemoteServerInformation.cpp \
     Database/ConnectionOptions.cpp \
-    Database/SqlTableModelColumnsEditable.cpp
+    Database/SqlTableModelColumnsEditable.cpp \
+    Dialogs/DialogCreateTeam.cpp
 
 HEADERS  += MainWindow.hpp \
     Utils/NException.hpp \
     Database/DatabaseManager.hpp \
     Dialogs/DialogRemoteServerInformation.hpp \
     Database/ConnectionOptions.hpp \
-    Database/SqlTableModelColumnsEditable.hpp
+    Database/SqlTableModelColumnsEditable.hpp \
+    Dialogs/DialogCreateTeam.hpp
 
 FORMS    += MainWindow.ui \
-    Dialogs/DialogRemoteServerInformation.ui
+    Dialogs/DialogRemoteServerInformation.ui \
+    Dialogs/DialogCreateTeam.ui
 
 RESOURCES += \
     Resources.qrc
