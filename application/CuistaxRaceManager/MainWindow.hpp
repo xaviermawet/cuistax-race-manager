@@ -22,6 +22,7 @@
 
 // Dialogs
 #include "Dialogs/DialogRemoteServerInformation.hpp"
+#include "Dialogs/DialogCreateTeam.hpp"
 
 #define SETTINGS_GROUP_MAINWINDOW_LAYOUT "MainWindow_Layout"
 #define SETTINGS_GROUP_REMOTE_CONNECTION "Remote_Server_Connection"
@@ -92,15 +93,15 @@ class MainWindow : public QMainWindow
 
     private slots:
 
+        // File menu
         void on_actionNewLocalProject_triggered(void);
-
         void on_actionNewRemoteProject_triggered(void);
-
         void on_actionOpenLocalProject_triggered(void);
-
         void on_actionOpenRemoteProject_triggered(void);
-
         void on_actionHelpProject_triggered(void);
+
+        // Team management
+        void on_actionCreateTeam_triggered(void);
 
     private:
 

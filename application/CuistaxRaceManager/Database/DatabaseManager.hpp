@@ -63,6 +63,17 @@ class DatabaseManager
 
         static bool openExistingRemoteDatabase(ConnectionOptions const& connectionOptions);
 
+        static QSqlQuery execQuery(QString const& queryString,
+                                   QVariantList const& values = QVariantList(),
+                                   bool forwardOnly = true);
+        static void execTransaction(QSqlQuery& query);
+        static QSqlQuery execTransaction(QString const& queryString,
+                                         QVariantList const& values = QVariantList(),
+                                         bool forwardOnly = true);
+        static void execBatch(QSqlQuery& query,
+                              QSqlQuery::BatchExecutionMode mode
+                              = QSqlQuery::ValuesAsRows);
+
         /* To bind value to a previously prepared query,
          * parameters have to be lists of variants */
         template <typename T>

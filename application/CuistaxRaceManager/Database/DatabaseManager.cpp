@@ -118,6 +118,74 @@ bool DatabaseManager::openExistingRemoteDatabase(const ConnectionOptions &connec
     return true;
 }
 
+QSqlQuery DatabaseManager::execQuery(QString const& queryString, QVariantList const& values, bool forwardOnly)
+{
+    QSqlQuery query(queryString);
+
+    // bind values
+    foreach (QVariant value, values)
+        query.addBindValue(value);
+
+    query.setForwardOnly(forwardOnly);
+
+    if (!query.exec())
+        throw NException(QObject::tr("Error when executing query : ")
+                         + query.lastQuery() + " " + query.lastError().text());
+
+    return query; // Implicit sharing
+}
+
+void DatabaseManager::execTransaction(QSqlQuery& query)
+{
+    QSqlDriver* sqlDriver = QSqlDatabase::database().driver();
+
+    sqlDriver->beginTransaction();
+
+    if(!query.exec())
+    {
+        sqlDriver->rollbackTransaction();
+        throw NException(QObject::tr("Request failed : ")
+                         + query.lastQuery() + query.lastError().text());
+    }
+
+    // Try to commit transaction
+    if(!sqlDriver->commitTransaction())
+        throw NException(QObject::tr("Data validation failed"));
+}
+
+QSqlQuery DatabaseManager::execTransaction(QString const& queryString, QVariantList const& values, bool forwardOnly)
+{
+    QSqlQuery query(queryString);
+
+    // bind values
+    foreach (QVariant value, values)
+        query.addBindValue(value);
+
+    query.setForwardOnly(forwardOnly);
+
+    DatabaseManager::execTransaction(query);
+
+    return query;
+}
+
+void DatabaseManager::execBatch(QSqlQuery &query, QSqlQuery::BatchExecutionMode mode)
+{
+    QSqlDriver* sqlDriver = QSqlDatabase::database().driver();
+
+    sqlDriver->beginTransaction();
+
+    if(!query.execBatch(mode))
+    {
+        sqlDriver->rollbackTransaction();
+        throw NException(QObject::tr("Request failed : ")
+                         + query.lastQuery() + query.lastError().text());
+    }
+
+    // Try to commit transaction
+    if(!sqlDriver->commitTransaction())
+        throw NException(QObject::tr("Data validation failed"));
+}
+
 bool DatabaseManager::closeConnection(void)
 {
     if(QSqlDatabase::database().isValid() &&

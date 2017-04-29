@@ -20,7 +20,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayoutTeams">
         <item>
          <widget class="QLabel" name="labelTeams">
@@ -370,5 +370,25 @@
  <resources>
   <include location="Resources.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButtonCreateTeam</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_actionCreateTeam_triggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>114</x>
+     <y>475</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>460</x>
+     <y>262</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>on_actionCreateTeam_triggered()</slot>
+ </slots>
 </ui>

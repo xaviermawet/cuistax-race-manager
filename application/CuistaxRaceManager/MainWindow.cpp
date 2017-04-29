@@ -289,5 +289,35 @@ void MainWindow::on_actionOpenRemoteProject_triggered(void)
 
 void MainWindow::on_actionHelpProject_triggered(void)
 {
+    // TODO
+}
 
+void MainWindow::on_actionCreateTeam_triggered(void)
+{
+    DialogCreateTeam dial;
+
+    if (dial.exec() != QDialog::Accepted) // User canceled
+        return;
+
+    // Create the insertion query
+    QSqlQuery insertQuery("INSERT INTO team (cuistax, name) values (?, ?)");
+    insertQuery.addBindValue(dial.cuistaxNumber());
+    insertQuery.addBindValue(dial.teamName());
+
+    try
+    {
+        // Insert new team in database
+        DatabaseManager::execTransaction(insertQuery);
+        this->statusBar()->showMessage(
+                    tr("Team \"%1\" created").arg(dial.teamName()), 4000);
+
+        // Refresh team list (table)
+        this->_teamTableModel->select();
+    }
+    catch(NException const& exception)
+    {
+        QMessageBox::warning(
+                    this, tr("Unable to create team %1").arg(dial.teamName()),
+                    exception.message());
+    }
 }
