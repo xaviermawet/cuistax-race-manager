@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     Database/ConnectionOptions.cpp \
     Database/SqlTableModelColumnsEditable.cpp \
     Dialogs/DialogCreateTeam.cpp \
-    Widgets/NStopWatch.cpp
+    Widgets/NStopWatch.cpp \
+    Widgets/NSpacer.cpp
 
 HEADERS  += MainWindow.hpp \
     Utils/NException.hpp \
@@ -40,7 +41,8 @@ HEADERS  += MainWindow.hpp \
     Database/ConnectionOptions.hpp \
     Database/SqlTableModelColumnsEditable.hpp \
     Dialogs/DialogCreateTeam.hpp \
-    Widgets/NStopWatch.hpp
+    Widgets/NStopWatch.hpp \
+    Widgets/NSpacer.hpp
 
 FORMS    += MainWindow.ui \
     Dialogs/DialogRemoteServerInformation.ui \
