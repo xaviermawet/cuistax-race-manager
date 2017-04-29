@@ -24,6 +24,9 @@
 #include "Dialogs/DialogRemoteServerInformation.hpp"
 #include "Dialogs/DialogCreateTeam.hpp"
 
+// Widgete
+#include "Widgets/NStopWatch.hpp"
+
 #define SETTINGS_GROUP_MAINWINDOW_LAYOUT "MainWindow_Layout"
 #define SETTINGS_GROUP_REMOTE_CONNECTION "Remote_Server_Connection"
 
@@ -49,6 +52,11 @@ class MainWindow : public QMainWindow
         virtual ~MainWindow(void);
 
     protected:
+
+        /*!
+         * \brief createToolBar : create all the widgets for the mainToolBar
+         */
+        void createToolBar(void);
 
         /*!
          * \brief createTeamListModel : create a list model based on table TEAM
@@ -103,10 +111,14 @@ class MainWindow : public QMainWindow
         // Team management
         void on_actionCreateTeam_triggered(void);
 
+        // Race Management
+        void raceStarted(void);
+
     private:
 
         // Widgets
         Ui::MainWindow *ui;
+        NStopWatch* _stopWatch;
 
         // Models
         SqlTableModelColumnsEditable* _teamTableModel;
