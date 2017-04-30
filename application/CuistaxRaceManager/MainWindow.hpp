@@ -19,12 +19,12 @@
 // Database
 #include "Database/DatabaseManager.hpp"
 #include "Database/SqlTableModelColumnsEditable.hpp"
+#include "Database/NSqlQueryModel.hpp"
 
 // Dialogs
 #include "Dialogs/DialogRemoteServerInformation.hpp"
 #include "Dialogs/DialogCreateTeam.hpp"
 #include "Dialogs/DialogCreateRace.hpp"
-#include "Dialogs/DialogTest.hpp"
 
 // Widgete
 #include "Widgets/NStopWatch.hpp"
@@ -65,6 +65,11 @@ class MainWindow : public QMainWindow
          * \brief createTeamListModel : create a list model based on table TEAM
          */
         void createTeamTableModel(void);
+
+        /*!
+         * \brief createRaceListModel : create a race list model based on RACE table
+         */
+        void createRaceListModel(void);
 
         /*!
          * \brief centerOnScreen: center the MainWindow
@@ -129,7 +134,8 @@ class MainWindow : public QMainWindow
         QComboBox*      _comboBoxRaceList;
 
         // Models
-        SqlTableModelColumnsEditable* _teamTableModel;
+        SqlTableModelColumnsEditable*   _teamTableModel;
+        NSqlQueryModel*                 _raceListModel;
 };
 
 #endif /* __MAINWINDOW_HPP__ */

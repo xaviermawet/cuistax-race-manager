@@ -15,7 +15,8 @@
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent), ui(new Ui::MainWindow), _stopWatch(NULL),
-    _labelRaceList(NULL), _comboBoxRaceList(NULL)
+    _labelRaceList(NULL), _comboBoxRaceList(NULL), _teamTableModel(NULL),
+    _raceListModel(NULL)
 {
     QCoreApplication::setOrganizationName("Nakim");
     QCoreApplication::setOrganizationDomain("nakim.be");
@@ -59,6 +60,7 @@ MainWindow::~MainWindow(void)
 
     // Models
     delete this->_teamTableModel;
+    delete this->_raceListModel;
 }
 
 /* ------------------------------------------------------------------------- *
@@ -145,6 +147,28 @@ void MainWindow::createTeamTableModel(void)
     this->_teamTableModel->select();
 }
 
+void MainWindow::createRaceListModel(void)
+{
+    // Stop if the combobox (container) doesn't exist
+    if (this->_comboBoxRaceList == NULL)
+        return;
+
+    if (this->_raceListModel != NULL)
+        delete this->_raceListModel;
+
+    // Create model
+    this->_raceListModel = new NSqlQueryModel(this);
+
+    // Apply the new model to the combobox
+    this->_comboBoxRaceList->setModel(this->_raceListModel);
+
+    // Populate the model
+    this->_raceListModel->setQuery("SELECT name, id, length FROM race");
+
+    // Select the first race
+    this->_comboBoxRaceList->setCurrentIndex(0);
+}
+
 void MainWindow::centerOnScreen(void)
 {
     QDesktopWidget screen;
@@ -215,6 +239,7 @@ void MainWindow::refreshAllDatabaseModels(void)
 {
     // Create all sql models base on batabase's table(s)
     this->createTeamTableModel();
+    this->createRaceListModel();
 
     // TODO : Manage other models
 }
@@ -422,7 +447,11 @@ void MainWindow::on_actionCreateRace_triggered(void)
         this->statusBar()->showMessage(
             tr("Race %1 created").arg(dial.raceName()), 4000);
 
-        // TODO : refresh race list model
+        this->_raceListModel->refresh();
+
+        // Show the newly created race in the combobox
+        this->_comboBoxRaceList->setCurrentIndex(
+                    this->_comboBoxRaceList->count() - 1);
     }
     catch(NException const& exception)
     {
