@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     Database/SqlTableModelColumnsEditable.cpp \
     Dialogs/DialogCreateTeam.cpp \
     Widgets/NStopWatch.cpp \
-    Widgets/NSpacer.cpp
+    Widgets/NSpacer.cpp \
+    Dialogs/DialogCreateRace.cpp
 
 HEADERS  += MainWindow.hpp \
     Utils/NException.hpp \
@@ -42,12 +43,14 @@ HEADERS  += MainWindow.hpp \
     Database/SqlTableModelColumnsEditable.hpp \
     Dialogs/DialogCreateTeam.hpp \
     Widgets/NStopWatch.hpp \
-    Widgets/NSpacer.hpp
+    Widgets/NSpacer.hpp \
+    Dialogs/DialogCreateRace.hpp
 
 FORMS    += MainWindow.ui \
     Dialogs/DialogRemoteServerInformation.ui \
     Dialogs/DialogCreateTeam.ui \
-    Widgets/NStopWatch.ui
+    Widgets/NStopWatch.ui \
+    Dialogs/DialogCreateRace.ui
 
 RESOURCES += \
     Resources.qrc

@@ -75,8 +75,6 @@ void DialogCreateTeam::readDataFromDatabase(void)
         this->_existingTeamNames.append(query.value(1).toString());
     }
 
-    qDebug() << "[DialogCreateTeam] readDataFromDatabase DONE";
-
     this->enableFields(true);
 }
 
