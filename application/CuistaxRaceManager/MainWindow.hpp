@@ -19,13 +19,16 @@
 // Database
 #include "Database/DatabaseManager.hpp"
 #include "Database/SqlTableModelColumnsEditable.hpp"
+#include "Database/NSqlQueryModel.hpp"
 
 // Dialogs
 #include "Dialogs/DialogRemoteServerInformation.hpp"
 #include "Dialogs/DialogCreateTeam.hpp"
+#include "Dialogs/DialogCreateRace.hpp"
 
 // Widgete
 #include "Widgets/NStopWatch.hpp"
+#include "Widgets/NSpacer.hpp"
 
 #define SETTINGS_GROUP_MAINWINDOW_LAYOUT "MainWindow_Layout"
 #define SETTINGS_GROUP_REMOTE_CONNECTION "Remote_Server_Connection"
@@ -61,7 +64,12 @@ class MainWindow : public QMainWindow
         /*!
          * \brief createTeamListModel : create a list model based on table TEAM
          */
-        void createTeamTabeModel(void);
+        void createTeamTableModel(void);
+
+        /*!
+         * \brief createRaceListModel : create a race list model based on RACE table
+         */
+        void createRaceListModel(void);
 
         /*!
          * \brief centerOnScreen: center the MainWindow
@@ -110,18 +118,24 @@ class MainWindow : public QMainWindow
 
         // Team management
         void on_actionCreateTeam_triggered(void);
+        void on_actionCreateRace_triggered(void);
 
         // Race Management
         void raceStarted(void);
+        void currentRaceChanged(int currentRaceIndex);
 
     private:
 
         // Widgets
-        Ui::MainWindow *ui;
-        NStopWatch* _stopWatch;
+        Ui::MainWindow  *ui;
+        NStopWatch*     _stopWatch;
+        QList<NSpacer*> _spacersRaceList;
+        QLabel*         _labelRaceList;
+        QComboBox*      _comboBoxRaceList;
 
         // Models
-        SqlTableModelColumnsEditable* _teamTableModel;
+        SqlTableModelColumnsEditable*   _teamTableModel;
+        NSqlQueryModel*                 _raceListModel;
 };
 
 #endif /* __MAINWINDOW_HPP__ */

@@ -183,8 +183,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionCreateRace"/>
-   <addaction name="actionDeleteSelectedRace"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNewLocalProject">

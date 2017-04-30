@@ -14,7 +14,9 @@
  * ------------------------------------------------------------------------- */
 
 MainWindow::MainWindow(QWidget* parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), _stopWatch(NULL)
+    QMainWindow(parent), ui(new Ui::MainWindow), _stopWatch(NULL),
+    _labelRaceList(NULL), _comboBoxRaceList(NULL), _teamTableModel(NULL),
+    _raceListModel(NULL)
 {
     QCoreApplication::setOrganizationName("Nakim");
     QCoreApplication::setOrganizationDomain("nakim.be");
@@ -52,8 +54,13 @@ MainWindow::~MainWindow(void)
     delete this->ui;
     delete this->_stopWatch;
 
+    qDeleteAll(this->_spacersRaceList);
+    delete this->_labelRaceList;
+    delete this->_comboBoxRaceList;
+
     // Models
     delete this->_teamTableModel;
+    delete this->_raceListModel;
 }
 
 /* ------------------------------------------------------------------------- *
@@ -68,7 +75,39 @@ void MainWindow::createToolBar(void)
      *                           Race list combobox                           *
      * ---------------------------------------------------------------------- */
 
-    // TODO
+    if (this->_comboBoxRaceList != NULL)
+        delete this->_comboBoxRaceList;
+    if (this->_labelRaceList != NULL)
+        delete this->_labelRaceList;
+    if (!this->_spacersRaceList.empty())
+    {
+        qDeleteAll(this->_spacersRaceList);
+        this->_spacersRaceList.clear();
+    }
+
+    // Create combobox
+    this->_comboBoxRaceList = new QComboBox(this);
+    this->_comboBoxRaceList->setEditable(false);
+    this->_comboBoxRaceList->setSizePolicy(QSizePolicy::Expanding,
+                                           QSizePolicy::Maximum);
+    // Create label
+    this->_labelRaceList = new QLabel(tr("Races:"), this);
+
+    // Create spacers
+    NSpacer* labelLeadingSpacer = new NSpacer(12, 0, this);
+    NSpacer* comboboxLeadingSpacer = new NSpacer(12, 0, this);
+    this->_spacersRaceList.append(labelLeadingSpacer);
+    this->_spacersRaceList.append(comboboxLeadingSpacer);
+
+    // Add the label and the comboBox to the mainToolBar
+    this->ui->mainToolBar->addWidget(labelLeadingSpacer);
+    this->ui->mainToolBar->addWidget(this->_labelRaceList);
+    this->ui->mainToolBar->addWidget(comboboxLeadingSpacer);
+    this->ui->mainToolBar->addWidget(this->_comboBoxRaceList);
+
+    // Update the current race id and update all the needed tables
+    connect(this->_comboBoxRaceList, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(currentRaceChanged(int)));
 
     /* ---------------------------------------------------------------------- *
      *                                Stopwatch                               *
@@ -89,7 +128,7 @@ void MainWindow::createToolBar(void)
     // TODO : if the race changed, the stopwatch is stopped
 }
 
-void MainWindow::createTeamTabeModel(void)
+void MainWindow::createTeamTableModel(void)
 {
     if (this->_teamTableModel != NULL)
         delete this->_teamTableModel;
@@ -106,6 +145,28 @@ void MainWindow::createTeamTabeModel(void)
 
     // Update data
     this->_teamTableModel->select();
+}
+
+void MainWindow::createRaceListModel(void)
+{
+    // Stop if the combobox (container) doesn't exist
+    if (this->_comboBoxRaceList == NULL)
+        return;
+
+    if (this->_raceListModel != NULL)
+        delete this->_raceListModel;
+
+    // Create model
+    this->_raceListModel = new NSqlQueryModel(this);
+
+    // Apply the new model to the combobox
+    this->_comboBoxRaceList->setModel(this->_raceListModel);
+
+    // Populate the model
+    this->_raceListModel->setQuery("SELECT name, id, length FROM race");
+
+    // Select the first race
+    this->_comboBoxRaceList->setCurrentIndex(0);
 }
 
 void MainWindow::centerOnScreen(void)
@@ -177,7 +238,8 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::refreshAllDatabaseModels(void)
 {
     // Create all sql models base on batabase's table(s)
-    this->createTeamTabeModel();
+    this->createTeamTableModel();
+    this->createRaceListModel();
 
     // TODO : Manage other models
 }
@@ -363,9 +425,50 @@ void MainWindow::on_actionCreateTeam_triggered(void)
     }
 }
 
+void MainWindow::on_actionCreateRace_triggered(void)
+{
+    DialogCreateRace dial(this);
+
+    if (dial.exec() != QDialog::Accepted) // User canceled
+        return;
+
+    // Insert new race in database
+    QSqlQuery insertQuery("INSERT INTO race (name, date, location, length) "
+                          "VALUES (?, ? , ?, ?)");
+    insertQuery.addBindValue(dial.raceName());
+    insertQuery.addBindValue(dial.raceDate());
+    insertQuery.addBindValue(dial.raceLocation());
+    insertQuery.addBindValue(dial.raceLength());
+
+    try
+    {
+        // Insert new race in database
+        DatabaseManager::execQuery(insertQuery);
+        this->statusBar()->showMessage(
+            tr("Race %1 created").arg(dial.raceName()), 4000);
+
+        this->_raceListModel->refresh();
+
+        // Show the newly created race in the combobox
+        this->_comboBoxRaceList->setCurrentIndex(
+                    this->_comboBoxRaceList->count() - 1);
+    }
+    catch(NException const& exception)
+    {
+        QMessageBox::warning(
+                    this, tr("Unable to create race %1").arg(dial.raceName()),
+                    exception.what());
+    }
+}
+
 void MainWindow::raceStarted(void)
 {
     // TODO: Delete all information about "previous laps"
 
     // TODO : create lap object for each team that will save the last lap information
+}
+
+void MainWindow::currentRaceChanged(int currentRaceIndex)
+{
+    // TODO
 }

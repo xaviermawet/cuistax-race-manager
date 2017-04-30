@@ -18,8 +18,9 @@ DialogCreateTeam::DialogCreateTeam(QWidget* parent) :
     this->ui->setupUi(this);
     this->enableFields(false);
 
-    // TODO : threading get data
-    QtConcurrent::run(this, &DialogCreateTeam::readDataFromDatabase);
+    // Get data in an other thread
+    //QtConcurrent::run(this, &DialogCreateTeam::readDataFromDatabase);
+    readDataFromDatabase();
 }
 
 DialogCreateTeam::~DialogCreateTeam(void)
@@ -60,7 +61,7 @@ void DialogCreateTeam::enableFields(bool enabled)
 
 void DialogCreateTeam::readDataFromDatabase(void)
 {
-    // Clear databse data
+    // Clear database data
     this->_existingTeamNames.clear();
     this->_existingCuistaxNumbers.clear();
 
@@ -73,8 +74,6 @@ void DialogCreateTeam::readDataFromDatabase(void)
         this->_existingCuistaxNumbers.append(query.value(0).toInt());
         this->_existingTeamNames.append(query.value(1).toString());
     }
-
-    qDebug() << "[DialogCreateTeam] readDataFromDatabase DONE";
 
     this->enableFields(true);
 }
