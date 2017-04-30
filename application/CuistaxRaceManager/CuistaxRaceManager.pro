@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     Dialogs/DialogCreateTeam.cpp \
     Widgets/NStopWatch.cpp \
     Widgets/NSpacer.cpp \
-    Dialogs/DialogCreateRace.cpp
+    Dialogs/DialogCreateRace.cpp \
+    Database/NSqlQueryModel.cpp
 
 HEADERS  += MainWindow.hpp \
     Utils/NException.hpp \
@@ -44,7 +45,8 @@ HEADERS  += MainWindow.hpp \
     Dialogs/DialogCreateTeam.hpp \
     Widgets/NStopWatch.hpp \
     Widgets/NSpacer.hpp \
-    Dialogs/DialogCreateRace.hpp
+    Dialogs/DialogCreateRace.hpp \
+    Database/NSqlQueryModel.hpp
 
 FORMS    += MainWindow.ui \
     Dialogs/DialogRemoteServerInformation.ui \
