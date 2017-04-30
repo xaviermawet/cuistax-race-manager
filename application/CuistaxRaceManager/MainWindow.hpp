@@ -116,11 +116,14 @@ class MainWindow : public QMainWindow
         void on_actionOpenRemoteProject_triggered(void);
         void on_actionHelpProject_triggered(void);
 
-        // Team management
+        // Teams management
         void on_actionCreateTeam_triggered(void);
-        void on_actionCreateRace_triggered(void);
+        void on_actionDeleteSelectedTeam_triggered(void);
 
-        // Race Management
+        // Races management
+        void on_actionCreateRace_triggered(void);
+        void on_actionDeleteSelectedRace_triggered(void);
+
         void raceStarted(void);
         void currentRaceChanged(int currentRaceIndex);
 
@@ -136,6 +139,10 @@ class MainWindow : public QMainWindow
         // Models
         SqlTableModelColumnsEditable*   _teamTableModel;
         NSqlQueryModel*                 _raceListModel;
+
+        // Race
+        int     _currentRaceID;
+        double  _currentRaceLength;
 };
 
 #endif /* __MAINWINDOW_HPP__ */
