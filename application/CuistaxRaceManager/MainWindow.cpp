@@ -400,6 +400,38 @@ void MainWindow::on_actionCreateTeam_triggered(void)
     }
 }
 
+void MainWindow::on_actionCreateRace_triggered(void)
+{
+    DialogCreateRace dial(this);
+
+    if (dial.exec() != QDialog::Accepted) // User canceled
+        return;
+
+    // Insert new race in database
+    QSqlQuery insertQuery("INSERT INTO race (name, date, location, length) "
+                          "VALUES (?, ? , ?, ?)");
+    insertQuery.addBindValue(dial.raceName());
+    insertQuery.addBindValue(dial.raceDate());
+    insertQuery.addBindValue(dial.raceLocation());
+    insertQuery.addBindValue(dial.raceLength());
+
+    try
+    {
+        // Insert new race in database
+        DatabaseManager::execQuery(insertQuery);
+        this->statusBar()->showMessage(
+            tr("Race %1 created").arg(dial.raceName()), 4000);
+
+        // TODO : refresh race list model
+    }
+    catch(NException const& exception)
+    {
+        QMessageBox::warning(
+                    this, tr("Unable to create race %1").arg(dial.raceName()),
+                    exception.what());
+    }
+}
+
 void MainWindow::raceStarted(void)
 {
     // TODO: Delete all information about "previous laps"

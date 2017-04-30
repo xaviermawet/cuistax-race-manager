@@ -23,6 +23,8 @@
 // Dialogs
 #include "Dialogs/DialogRemoteServerInformation.hpp"
 #include "Dialogs/DialogCreateTeam.hpp"
+#include "Dialogs/DialogCreateRace.hpp"
+#include "Dialogs/DialogTest.hpp"
 
 // Widgete
 #include "Widgets/NStopWatch.hpp"
@@ -111,6 +113,7 @@ class MainWindow : public QMainWindow
 
         // Team management
         void on_actionCreateTeam_triggered(void);
+        void on_actionCreateRace_triggered(void);
 
         // Race Management
         void raceStarted(void);
