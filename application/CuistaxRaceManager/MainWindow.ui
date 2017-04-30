@@ -55,12 +55,20 @@
             <property name="text">
              <string>Create</string>
             </property>
+            <property name="icon">
+             <iconset resource="Resources.qrc">
+              <normaloff>:/icons/plus</normaloff>:/icons/plus</iconset>
+            </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="pushButtonDeleteTeam">
             <property name="text">
-             <string>Delete</string>
+             <string>Delete selected</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Resources.qrc">
+              <normaloff>:/icons/minus</normaloff>:/icons/minus</iconset>
             </property>
            </widget>
           </item>
@@ -385,8 +393,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButtonDeleteTeam</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_actionDeleteSelectedTeam_triggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>319</x>
+     <y>475</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>460</x>
+     <y>262</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_actionCreateTeam_triggered()</slot>
+  <slot>on_actionDeleteSelectedTeam_triggered()</slot>
  </slots>
 </ui>

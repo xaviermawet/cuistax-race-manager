@@ -116,11 +116,13 @@ class MainWindow : public QMainWindow
         void on_actionOpenRemoteProject_triggered(void);
         void on_actionHelpProject_triggered(void);
 
-        // Team management
+        // Teams management
         void on_actionCreateTeam_triggered(void);
+        void on_actionDeleteSelectedTeam_triggered(void);
+
+        // Races management
         void on_actionCreateRace_triggered(void);
 
-        // Race Management
         void raceStarted(void);
         void currentRaceChanged(int currentRaceIndex);
 

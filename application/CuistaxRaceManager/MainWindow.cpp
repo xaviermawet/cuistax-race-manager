@@ -425,6 +425,41 @@ void MainWindow::on_actionCreateTeam_triggered(void)
     }
 }
 
+void MainWindow::on_actionDeleteSelectedTeam_triggered(void)
+{
+    QItemSelectionModel* selectionModel = this->ui->tableViewTeams->selectionModel();
+
+    // Nothing selected
+    if(!selectionModel->hasSelection())
+        return;
+
+    QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
+
+    QSqlQuery deleteQuery("DELETE FROM team WHERE cuistax = ?");
+    deleteQuery.addBindValue(selectedIndexes.first().data());
+
+    try
+    {
+        DatabaseManager::execQuery(deleteQuery);
+        this->statusBar()->showMessage(
+            tr("Team %1 deleted").arg(selectedIndexes.last().data().toString()),
+            4000);
+
+        // Update the team list
+        this->_teamTableModel->select();
+
+        // Update the race table and ranking model
+        // TODO this->updateLapListTableContent();
+        // TODO this->_rankingModel->refresh();
+    }
+    catch(NException const& exception)
+    {
+        QMessageBox::warning(this, tr("Error when deleting team %1")
+                             .arg(selectedIndexes.last().data().toString()),
+                             exception.message());
+    }
+}
+
 void MainWindow::on_actionCreateRace_triggered(void)
 {
     DialogCreateRace dial(this);
