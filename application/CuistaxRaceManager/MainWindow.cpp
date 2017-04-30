@@ -16,7 +16,7 @@
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent), ui(new Ui::MainWindow), _stopWatch(NULL),
     _labelRaceList(NULL), _comboBoxRaceList(NULL), _teamTableModel(NULL),
-    _raceListModel(NULL)
+    _raceListModel(NULL), _currentRaceID(-1), _currentRaceLength(-1)
 {
     QCoreApplication::setOrganizationName("Nakim");
     QCoreApplication::setOrganizationDomain("nakim.be");
@@ -117,6 +117,7 @@ void MainWindow::createToolBar(void)
 
     // Create stopwatch
     this->_stopWatch = new NStopWatch(this);
+    this->_stopWatch->setEnabled(false);
 
     // Add the stopwatch to the mainToolBar
     this->ui->mainToolBar->addWidget(this->_stopWatch);
@@ -496,6 +497,42 @@ void MainWindow::on_actionCreateRace_triggered(void)
     }
 }
 
+void MainWindow::on_actionDeleteSelectedRace_triggered(void)
+{
+    // Stop if there is no race selected
+    if (this->_currentRaceID <= 0)
+        return;
+
+    // Get race name
+    QString raceName  = this->_comboBoxRaceList->currentText();
+    int comboBoxIndex = this->_comboBoxRaceList->currentIndex();
+
+    // Delete race from database
+    QSqlQuery deleteQuery("DELETE FROM race WHERE id = ?");
+    deleteQuery.addBindValue(this->_currentRaceID);
+
+    try
+    {
+        DatabaseManager::execQuery(deleteQuery);
+        this->statusBar()->showMessage(
+            tr("Race %1 deleted").arg(raceName), 4000);
+
+        // Update the race list
+        this->_raceListModel->refresh();
+
+        // Show the previous race in combobox (if exists)
+        if (comboBoxIndex > 0)
+            --comboBoxIndex;
+        this->_comboBoxRaceList->setCurrentIndex(comboBoxIndex);
+    }
+    catch(NException const& exception)
+    {
+        QMessageBox::warning(
+            this, tr("Error when deleting race %1").arg(raceName),
+            exception.message());
+    }
+}
+
 void MainWindow::raceStarted(void)
 {
     // TODO: Delete all information about "previous laps"
@@ -505,5 +542,30 @@ void MainWindow::raceStarted(void)
 
 void MainWindow::currentRaceChanged(int currentRaceIndex)
 {
-    // TODO
+    // No row selected in the combobox
+    if (currentRaceIndex < 0)
+    {
+        this->_currentRaceID = -1;
+        this->_currentRaceLength = -1;
+        this->_stopWatch->setEnabled(false);
+
+        // clear lap list table
+        // TODO this->ui->tableWidgetLapList->clearContents();
+        // TODO this->ui->tableWidgetLapList->setRowCount(0);
+
+        return;
+    }
+
+    // Get the current race id and length
+    this->_currentRaceID =
+            this->_raceListModel->index(currentRaceIndex, 1).data().toInt();
+    this->_currentRaceLength =
+            this->_raceListModel->index(currentRaceIndex, 2).data().toDouble();
+
+    // Enable stopwatch
+    this->_stopWatch->setEnabled(true);
+
+    // Update all the tables based on RACE or LAP sql tables
+    // TODO this->updateLapListTableContent();
+    // TODO this->updateRankingModelQuery();
 }

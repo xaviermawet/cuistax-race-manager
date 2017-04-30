@@ -122,6 +122,7 @@ class MainWindow : public QMainWindow
 
         // Races management
         void on_actionCreateRace_triggered(void);
+        void on_actionDeleteSelectedRace_triggered(void);
 
         void raceStarted(void);
         void currentRaceChanged(int currentRaceIndex);
@@ -138,6 +139,10 @@ class MainWindow : public QMainWindow
         // Models
         SqlTableModelColumnsEditable*   _teamTableModel;
         NSqlQueryModel*                 _raceListModel;
+
+        // Race
+        int     _currentRaceID;
+        double  _currentRaceLength;
 };
 
 #endif /* __MAINWINDOW_HPP__ */
