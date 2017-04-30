@@ -126,7 +126,7 @@ void MainWindow::createToolBar(void)
     // TODO : if the race changed, the stopwatch is stopped
 }
 
-void MainWindow::createTeamTabeModel(void)
+void MainWindow::createTeamTableModel(void)
 {
     if (this->_teamTableModel != NULL)
         delete this->_teamTableModel;
@@ -214,7 +214,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::refreshAllDatabaseModels(void)
 {
     // Create all sql models base on batabase's table(s)
-    this->createTeamTabeModel();
+    this->createTeamTableModel();
 
     // TODO : Manage other models
 }

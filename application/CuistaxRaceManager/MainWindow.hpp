@@ -64,7 +64,7 @@ class MainWindow : public QMainWindow
         /*!
          * \brief createTeamListModel : create a list model based on table TEAM
          */
-        void createTeamTabeModel(void);
+        void createTeamTableModel(void);
 
         /*!
          * \brief centerOnScreen: center the MainWindow
